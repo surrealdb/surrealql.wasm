@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Development server</title>
+	</head>
+	<body>
+		<p>Open a console to access the Surreal class!</p>
+		<script type="module">
+			import * as SurrealQL from './compiled/v2/index.js';
+			import { Value } from './compiled/v2/index.js';
+			window.SurrealQL = SurrealQL;
+			window.Value = Value;
+		</script>
+	</body>
+</html>
