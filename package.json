@@ -17,11 +17,11 @@
         "lib/"
     ],
     "exports": {
-        "v1": {
+        "./v1": {
             "types": "./lib/v1.d.ts",
             "default": "./lib/v1.js"
         },
-        "v2": {
+        "./v2": {
             "types": "./lib/v2.d.ts",
             "default": "./lib/v2.js"
         }
