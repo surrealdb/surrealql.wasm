@@ -11,11 +11,43 @@ WebAssembly utility functions for SurrealQL.
 A few code snippets to showcase various ways of importing the library.
 
 ```js
-import { parse, validate } from 'surrealql.wasm';
+import { SurrealQL, Value } from 'surrealql.wasm/v1';
+import { SurrealQL, Value } from 'surrealql.wasm/v2';
 ```
 
 ### Via UNPKG
 ```js
-import { parse, validate } from 'https://unpkg.com/surrealql.wasm/lib/v1.js';
-import { parse, validate } from 'https://unpkg.com/surrealql.wasm/lib/v2.js';
+import { SurrealQL, Value } from 'https://unpkg.com/surrealql.wasm/lib/v1.js';
+import { SurrealQL, Value } from 'https://unpkg.com/surrealql.wasm/lib/v2.js';
+```
+
+## Example usage
+
+```js
+import { SurrealQL, Value } from 'surrealql.wasm/v1';
+
+// Creating a SurrealQL Value
+const value = Value.from_json({ id: "person:tobie" });
+const value = Value.from_cbor(/* Uint8Array */);
+
+// Formatting a value
+value.format();
+value.format(true); // Pretty
+value.json();
+value.json(true); // Pretty
+
+
+// Parsing queries
+SurrealQL.parse("SELECT * FROM person");
+
+// Formatting queries
+SurrealQL.format("SELECT * FROM person");
+
+// Validating queries or values
+SurrealQL.validate("SELECT * FROM person");
+SurrealQL.validate_where("something = true");
+SurrealQL.validate_value("[1, 2, 3]");
+SurrealQL.validate_thing("person:tobie");
+SurrealQL.validate_idiom("person:tobie->likes[WHERE something]");
+SurrealQL.validate_subquery("SELECT * FROM person");
 ```
