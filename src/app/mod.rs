@@ -1,10 +1,12 @@
 use crate::err::Error;
+use serde_json::ser::PrettyFormatter;
 use serde_json::Value as Json;
 use serde_wasm_bindgen::from_value;
 use surrealdb::rpc::format::cbor::Cbor;
 use wasm_bindgen::prelude::JsValue;
 use wasm_bindgen::prelude::*;
 use web_sys::js_sys::Uint8Array;
+use serde::ser::Serialize;
 
 #[wasm_bindgen(start)]
 pub fn setup() {
@@ -109,6 +111,28 @@ impl Value {
         Ok(match pretty {
             true => format!("{:#}", self.inner),
             false => format!("{}", self.inner),
+        })
+    }
+
+    /// Format a SurrealQL value into JSON
+    ///
+    /// ```js
+    /// const value = Value.from_json({ test: true });
+    /// const output = value.json(true);
+    ///
+    #[wasm_bindgen]
+    pub fn json(&self, pretty: bool) -> Result<String, Error> {
+        Ok(match pretty {
+            true => {
+				let mut buf = Vec::new();
+				let mut serializer = serde_json::Serializer::with_formatter(
+					&mut buf,
+					PrettyFormatter::with_indent(b"\t"),
+				);
+				self.inner.clone().into_json().serialize(&mut serializer).unwrap();
+				String::from_utf8(buf).unwrap()
+			}
+            false => self.inner.clone().into_json().to_string(),
         })
     }
 }

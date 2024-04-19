@@ -5,12 +5,19 @@
 		<title>Development server</title>
 	</head>
 	<body>
-		<p>Open a console to access the Surreal class!</p>
+		<p>All exports from parser1 and parser2 is respectively assigned to window as parser1 and parser2. Open your browser console to play around with it!</p>
 		<script type="module">
-			import * as SurrealQL from './compiled/v2/index.js';
-			import { Value } from './compiled/v2/index.js';
-			window.SurrealQL = SurrealQL;
-			window.Value = Value;
+			import * as v1 from './compiled/v1/index.js';
+			window.parser1 = {
+				SurrealQL: v1,
+				Value: v1.Value,
+			};
+
+			import * as v2 from './compiled/v2/index.js';
+			window.parser2 = {
+				SurrealQL: v2,
+				Value: v2.Value,
+			};
 		</script>
 	</body>
 </html>
