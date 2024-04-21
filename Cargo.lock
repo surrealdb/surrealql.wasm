@@ -2477,8 +2477,9 @@ checksum = "81cdd64d312baedb58e21336b31bc043b77e01cc99033ce76ef539f78e965ebc"
 
 [[package]]
 name = "surrealdb-core"
-version = "2.0.0-1.4.1"
-source = "git+https://github.com/surrealdb/surrealdb?rev=5ed7c52#5ed7c52dc82734ab5bd3c0ccffae037be945f176"
+version = "2.0.0-1.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c23c46ce1889c7238d10c66264f7283c68ae124e99161c7c3eec6f152cb6f691"
 dependencies = [
  "addr",
  "any_ascii",
