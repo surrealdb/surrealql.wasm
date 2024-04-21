@@ -22,7 +22,7 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = []
 parser-v1 = []
-parser-v2 = ["surrealdb-core/experimental-parser"]
+parser-v2 = ["surrealdb/experimental-parser"]
 stack-traces = ["dep:console_error_panic_hook"]
 
 [dependencies]
