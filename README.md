@@ -27,6 +27,7 @@ import { SurrealQL, Value } from 'https://unpkg.com/surrealql.wasm/lib/v2.js';
 import { SurrealQL, Value } from 'surrealql.wasm/v1';
 
 // Creating a SurrealQL Value
+const value = Value.from_string("{ id: \"person:tobie\" }");
 const value = Value.from_json({ id: "person:tobie" });
 const value = Value.from_cbor(/* Uint8Array */);
 
@@ -36,6 +37,8 @@ value.format(true); // Pretty
 value.json();
 value.json(true); // Pretty
 
+// Converting a value to CBOR, represented as a Uint8Array
+value.to_cbor();
 
 // Parsing queries
 SurrealQL.parse("SELECT * FROM person");

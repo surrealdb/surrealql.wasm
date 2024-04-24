@@ -3,6 +3,7 @@ use serde_json::ser::PrettyFormatter;
 use serde_json::Value as Json;
 use serde_wasm_bindgen::from_value;
 use surrealdb::rpc::format::cbor::Cbor;
+use surrealdb::sql::json;
 use wasm_bindgen::prelude::JsValue;
 use wasm_bindgen::prelude::*;
 use web_sys::js_sys::Uint8Array;
@@ -76,6 +77,17 @@ impl Value {
     /// Create a new SurrealQL value
     ///
     /// ```js
+    /// const value = Value.from_string("{ test: true }");
+    /// ```
+    #[wasm_bindgen]
+    pub fn from_string(val: String) -> Result<Value, Error> {
+		let val = json(&val).map_err(|_| "Failed to parse value from string")?;
+        Ok(Value { inner: val })
+    }
+
+    /// Create a new SurrealQL value
+    ///
+    /// ```js
     /// const value = Value.from_json({ test: true });
     /// ```
     #[wasm_bindgen]
@@ -135,4 +147,20 @@ impl Value {
             false => self.inner.clone().into_json().to_string(),
         })
     }
+
+    /// Return a parsed SurrealQL value as CBOR
+    ///
+    /// ```js
+    /// const value = Value.from_string("{ test: true }");
+    /// const output = value.to_cbor();
+    ///
+    #[wasm_bindgen]
+	pub fn to_cbor(&self) -> Result<Uint8Array, Error> {
+		// Into CBOR value
+		let cbor: Cbor = self.inner.clone().try_into().map_err(|_| "Failed to convert Value to CBOR")?;
+		let mut res = Vec::new();
+		ciborium::into_writer(&cbor.0, &mut res).unwrap();
+		let out_arr: Uint8Array = res.as_slice().into();
+		Ok(out_arr.into())
+	}
 }
