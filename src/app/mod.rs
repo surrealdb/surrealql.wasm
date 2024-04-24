@@ -17,7 +17,8 @@ pub fn setup() {
 #[wasm_bindgen]
 pub fn parse(sql: &str) -> Result<JsValue, Error> {
     let ast = surrealdb::sql::parse(sql)?;
-    let res = serde_wasm_bindgen::to_value(&ast)?;
+    let ser = serde_wasm_bindgen::Serializer::json_compatible().serialize_large_number_types_as_bigints(true);
+    let res = ast.serialize(&ser)?;
     Ok(res)
 }
 
