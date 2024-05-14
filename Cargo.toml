@@ -36,7 +36,7 @@ log = "0.4.21"
 serde = { version = "1.0.197", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
 serde_json = "1.0.115"
-surrealdb = { package="surrealdb-core", version = "=2.0.0-1.4.2", default-features = false , features = ["jwks"]}
+surrealdb = { package="surrealdb-core", version = "=2.0.0-1.5.0", default-features = false , features = ["jwks"]}
 wasm-bindgen = "0.2.92"
 wasm-bindgen-futures = "0.4.42"
 web-sys = { version = "0.3.69", features = ["console"] }

@@ -1,6 +1,6 @@
 {
     "name": "surrealql.wasm",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "packageManager": "pnpm@9.0.6",
     "description": "WebAssembly utility functions for SurrealQL",
     "repository": {
