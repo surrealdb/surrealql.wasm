@@ -3,7 +3,6 @@ use serde_json::ser::PrettyFormatter;
 use serde_json::Value as Json;
 use serde_wasm_bindgen::from_value;
 use surrealdb::rpc::format::cbor::Cbor;
-use surrealdb::sql::json;
 use wasm_bindgen::prelude::JsValue;
 use wasm_bindgen::prelude::*;
 use web_sys::js_sys::Uint8Array;
