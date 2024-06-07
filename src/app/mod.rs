@@ -82,7 +82,18 @@ impl Value {
     /// ```
     #[wasm_bindgen]
     pub fn from_string(val: String) -> Result<Value, Error> {
-		let val = json(&val).map_err(|_| "Failed to parse value from string")?;
+		let val = surrealdb::sql::value(&val).map_err(|_| "Failed to parse value from string")?;
+        Ok(Value { inner: val })
+    }
+    /// Create a new SurrealQL value from a JSON string
+	/// Errors when it encounters non-json values
+    ///
+    /// ```js
+    /// const value = Value.from_json_string("{ test: true }");
+    /// ```
+    #[wasm_bindgen]
+    pub fn from_json_string(val: String) -> Result<Value, Error> {
+		let val = surrealdb::sql::json(&val).map_err(|_| "Failed to parse value from JSON string")?;
         Ok(Value { inner: val })
     }
 
