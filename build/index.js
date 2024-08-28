@@ -3,7 +3,7 @@ import copyFilePlugin from 'esbuild-plugin-copy-file';
 import fs from 'fs';
 
 const shimContent = new Buffer.from(await fs.readFileSync('./build/shim.js'));
-const targets = ['v1', 'v2'];
+const targets = ['surrealql'];
 
 await Promise.all(targets.map(build));
 
@@ -14,17 +14,21 @@ async function build(target) {
 
 async function applyPatches(target) {
 	let content = fs.readFileSync(`compiled/${target}/index.js`).toString();
-	content = shimContent + content;
+    content = shimContent + content;
 
-	const tauriPatch = fs.readFileSync(`build/tauri.patch`).toString().split("===========\n");
-	content = content.replace(tauriPatch[0], tauriPatch[1]);
+    const tauriPatch = fs
+        .readFileSync("build/tauri.patch")
+        .toString()
+        .split("===========\n");
+	
+    content = content.replace(tauriPatch[0], tauriPatch[1]);
 
-	fs.writeFileSync(`compiled/${target}/patched.js`, content)
+    fs.writeFileSync(`compiled/${target}/index.js`, content);
 }
 
 async function bundle(target) {
 	await esbuild.build({
-		entryPoints: [`compiled/${target}/patched.js`],
+		entryPoints: [`lib/${target}.js`],
 		sourcemap: true,
 		bundle: true,
 		format: "esm",
