@@ -17,8 +17,8 @@
     ],
     "exports": {
         ".": {
-            "types": "./dist/surrealql.d.ts",
-            "default": "./dist/surrealql.js"
+            "types": "./dist/surrealql/index.d.ts",
+            "default": "./dist/surrealql/index.js"
         }
     },
     "scripts": {
