@@ -1,5 +1,6 @@
 import * as esbuild from "esbuild";
 import copyFilePlugin from 'esbuild-plugin-copy-file';
+import { spawn } from "node:child_process";
 import fs from 'fs';
 
 const shimContent = new Buffer.from(await fs.readFileSync('./build/shim.js'));
@@ -28,23 +29,37 @@ async function applyPatches(target) {
 
 async function bundle(target) {
 	await esbuild.build({
-		entryPoints: [`lib/${target}.js`],
+		entryPoints: [`lib/${target}.ts`],
 		sourcemap: true,
 		bundle: true,
+        minifyWhitespace: true,
+        minifySyntax: true,
 		format: "esm",
 		platform: 'node',
 		outfile: `dist/${target}/index.js`,
 		plugins: [
 			copyFilePlugin({
 				after: Object.fromEntries(
-					["index_bg.wasm", "index_bg.wasm.d.ts", "index.d.ts"].map(
+					["index_bg.wasm", "index_bg.wasm.d.ts"].map(
 						(f) => [
 							`dist/${target}/${f}`,
 							`compiled/${target}/${f}`,
 						]
 					)
-				),
+				)
 			}),
 		],
+	});
+
+	spawn("npx", [
+        "dts-bundle-generator",
+        "-o",
+        `dist/${target}/types.d.ts`,
+        `lib/${target}.ts`,
+        "--no-check",
+        "--export-referenced-types",
+        "false",
+    ], {
+		stdio: "inherit",
 	});
 }

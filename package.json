@@ -17,7 +17,7 @@
     ],
     "exports": {
         ".": {
-            "types": "./dist/surrealql/index.d.ts",
+            "types": "./dist/surrealql/types.d.ts",
             "default": "./dist/surrealql/index.js"
         }
     },
@@ -28,6 +28,7 @@
         "build-literal": "node build/index.js"
     },
     "devDependencies": {
+		"dts-bundle-generator": "^9.5.1",
         "esbuild": "^0.17.19",
         "esbuild-plugin-copy-file": "^0.0.2"
     }
