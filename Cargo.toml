@@ -24,7 +24,7 @@ default = []
 stack-traces = ["dep:console_error_panic_hook"]
 
 [dependencies]
-surrealdb = { package = "surrealdb-core-beta", version = "2.0.0", default-features = false , features = ["jwks"]}
+surrealdb = { package = "surrealdb-core-beta", version = "2.0.1", default-features = false , features = ["jwks"]}
 ciborium = "0.2.1"
 console_error_panic_hook = { version = "0.1.7", optional = true }
 fern = "0.6.2"
