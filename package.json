@@ -1,6 +1,6 @@
 {
     "name": "@surrealdb/ql-wasm",
-    "version": "0.2.0-beta.5",
+    "version": "0.2.0-beta.6",
     "packageManager": "pnpm@9.0.6",
     "description": "WebAssembly utility functions for SurrealQL",
     "repository": {
@@ -28,7 +28,7 @@
         "build-literal": "node build/index.js"
     },
     "devDependencies": {
-		"dts-bundle-generator": "^9.5.1",
+        "dts-bundle-generator": "^9.5.1",
         "esbuild": "^0.17.19",
         "esbuild-plugin-copy-file": "^0.0.2"
     }
