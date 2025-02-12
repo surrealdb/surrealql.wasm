@@ -2,11 +2,20 @@ use crate::err::Error;
 use serde_json::ser::PrettyFormatter;
 use serde_json::Value as Json;
 use serde_wasm_bindgen::from_value;
+use surrealdb::dbs::capabilities::Targets;
+use surrealdb::dbs::Capabilities;
 use surrealdb::rpc::format::cbor::Cbor;
+use surrealdb::sql::Statement;
 use wasm_bindgen::prelude::JsValue;
 use wasm_bindgen::prelude::*;
 use web_sys::js_sys::Uint8Array;
 use serde::ser::Serialize;
+
+macro_rules! caps {
+    () => {
+        &Capabilities::all().with_experimental(Targets::All)
+    }
+}
 
 #[wasm_bindgen(start)]
 pub fn setup() {
@@ -15,7 +24,7 @@ pub fn setup() {
 
 #[wasm_bindgen]
 pub fn parse(sql: &str) -> Result<JsValue, Error> {
-    let ast = surrealdb::sql::parse(sql)?;
+    let ast = surrealdb::syn::parse_with_capabilities(sql, caps!())?;
     let ser = serde_wasm_bindgen::Serializer::json_compatible().serialize_large_number_types_as_bigints(true);
     let res = ast.serialize(&ser)?;
     Ok(res)
@@ -23,7 +32,7 @@ pub fn parse(sql: &str) -> Result<JsValue, Error> {
 
 #[wasm_bindgen]
 pub fn format(sql: &str, pretty: bool) -> Result<String, Error> {
-    let ast = surrealdb::sql::parse(sql)?;
+    let ast = surrealdb::syn::parse_with_capabilities(sql, caps!())?;
     Ok(match pretty {
         true => format!("{ast:#}"),
         false => format!("{ast}"),
@@ -32,20 +41,20 @@ pub fn format(sql: &str, pretty: bool) -> Result<String, Error> {
 
 #[wasm_bindgen]
 pub fn validate(sql: &str) -> Result<(), Error> {
-    surrealdb::sql::parse(sql)?;
+    surrealdb::syn::parse_with_capabilities(sql, caps!())?;
     Ok(())
 }
 
 #[wasm_bindgen]
 pub fn validate_where(sql: &str) -> Result<(), Error> {
     let sql = format!("SELECT * FROM validate WHERE {sql}");
-    surrealdb::sql::parse(&sql)?;
+    surrealdb::syn::parse_with_capabilities(&sql, caps!())?;
     Ok(())
 }
 
 #[wasm_bindgen]
 pub fn validate_value(sql: &str) -> Result<(), Error> {
-    surrealdb::sql::value(sql)?;
+    surrealdb::syn::parse_with_capabilities(sql, caps!())?;
     Ok(())
 }
 
@@ -63,7 +72,19 @@ pub fn validate_idiom(sql: &str) -> Result<(), Error> {
 
 #[wasm_bindgen]
 pub fn validate_subquery(sql: &str) -> Result<(), Error> {
-    surrealdb::sql::subquery(sql)?;
+    let sql = format!("({sql})");
+    let mut val = surrealdb::syn::parse_with_capabilities(&sql, caps!())?;
+
+    // Validate the value
+    let Statement::Value(val) = val.remove(0) else {
+        return Err("Internal error: Expected a Statement::Value when parsing a subquery".into());
+    };
+
+    // Validate the value
+    if !matches!(val, surrealdb::sql::Value::Subquery(_)) {
+        return Err("Internal error: Expected a Value::Subquery when parsing a subquery".into());
+    };
+
     Ok(())
 }
 
