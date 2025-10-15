@@ -3278,7 +3278,6 @@ dependencies = [
  "serde_json",
  "surrealdb",
  "wasm-bindgen",
- "wasm-bindgen-futures",
  "web-sys",
 ]
 
