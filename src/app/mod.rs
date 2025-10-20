@@ -172,6 +172,6 @@ impl Value {
 		let mut res = Vec::new();
 		ciborium::into_writer(&cbor.0, &mut res).unwrap();
 		let out_arr: Uint8Array = res.as_slice().into();
-		Ok(out_arr.into())
+		Ok(out_arr)
 	}
 }

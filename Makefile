@@ -12,7 +12,7 @@ setup:
 check:
 	cargo check
 	cargo fmt --all -- --check
-	cargo clippy -- -W warnings
+	cargo clippy -- -D warnings
 
 .PHONY: test
 test:
