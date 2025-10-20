@@ -19,6 +19,12 @@ pub fn parse(_sql: &str) -> Result<JsValue, Error> {
 }
 
 #[wasm_bindgen]
+pub fn extract_tables_from_kind(kind_sql: &str) -> Result<Vec<String>, Error> {
+    let tables = surrealdb_core::syn::extract_tables_from_kind(kind_sql)?;
+    Ok(tables)
+}
+
+#[wasm_bindgen]
 pub fn format(sql: &str, pretty: bool) -> Result<String, Error> {
 	let ast = surrealdb_core::syn::parse(sql)?;
 	Ok(match pretty {

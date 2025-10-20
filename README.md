@@ -40,9 +40,6 @@ value.json(true); // Pretty
 // Converting a value to CBOR, represented as a Uint8Array
 value.to_cbor();
 
-// Parsing queries
-SurrealQL.parse("SELECT * FROM person");
-
 // Formatting queries
 SurrealQL.format("SELECT * FROM person");
 
@@ -53,4 +50,10 @@ SurrealQL.validate_value("[1, 2, 3]");
 SurrealQL.validate_thing("person:tobie");
 SurrealQL.validate_idiom("person:tobie->likes[WHERE something]");
 SurrealQL.validate_subquery("SELECT * FROM person");
+
+// Extracting tables from a kind
+SurrealQL.extract_tables_from_kind("record<person>");
+// ["person"]
+SurrealQL.extract_tables_from_kind("record<a | b | c>");
+// ["a", "b", "c"]
 ```
