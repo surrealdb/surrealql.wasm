@@ -12,7 +12,7 @@ setup:
 check:
 	cargo check
 	cargo fmt --all -- --check
-	cargo clippy -- -W warnings
+	cargo clippy -- -D warnings
 
 .PHONY: test
 test:
@@ -25,9 +25,9 @@ clean:
 
 .PHONY: serve
 serve:
-	npm run build
-	npm run serve
+	pnpm run build
+	pnpm run serve
 
 .PHONY: build
 build:
-	npm run build
+	pnpm run build
