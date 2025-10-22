@@ -2895,8 +2895,7 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 [[package]]
 name = "surrealdb-core"
 version = "3.0.0-alpha.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3aafb477f60a0214441906ff930e5ee0d4f39ba6b16514dd381941fc62a89fad"
+source = "git+https://github.com/surrealdb/surrealdb?branch=main#8e9ef87ee3d2ab165dffb93dd06e012c5c058f9f"
 dependencies = [
  "addr",
  "ahash 0.8.11",
@@ -3010,8 +3009,7 @@ dependencies = [
 [[package]]
 name = "surrealdb-types"
 version = "3.0.0-alpha.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14a00a6a68fa3c9aa19264084004899c452a33654de521d08325cd7ac84e09aa"
+source = "git+https://github.com/surrealdb/surrealdb?branch=main#8e9ef87ee3d2ab165dffb93dd06e012c5c058f9f"
 dependencies = [
  "anyhow",
  "bytes",
@@ -3037,8 +3035,7 @@ dependencies = [
 [[package]]
 name = "surrealdb-types-derive"
 version = "3.0.0-alpha.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2351ce9f3579eb76caef0f44ec7a04d069789629eaae96656907d95ece4cf5b2"
+source = "git+https://github.com/surrealdb/surrealdb?branch=main#8e9ef87ee3d2ab165dffb93dd06e012c5c058f9f"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3047,7 +3044,7 @@ dependencies = [
 
 [[package]]
 name = "surrealql"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
