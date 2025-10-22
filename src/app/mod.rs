@@ -3,19 +3,17 @@ use serde::ser::Serialize;
 use serde_json::ser::PrettyFormatter;
 use serde_json::Value as Json;
 use serde_wasm_bindgen::from_value;
-use surrealdb_types::ToSql;
 use surrealdb_core::dbs::capabilities::Targets;
-use surrealdb::dbs::Capabilities;
-use surrealdb::rpc::format::cbor::Cbor;
-use surrealdb::sql::Statement;
+use surrealdb_core::dbs::Capabilities;
+use surrealdb_types::ToSql;
 use wasm_bindgen::prelude::JsValue;
 use wasm_bindgen::prelude::*;
 use web_sys::js_sys::Uint8Array;
 
 macro_rules! caps {
-    () => {
-        &Capabilities::all().with_experimental(Targets::All)
-    }
+	() => {
+		&Capabilities::all().with_experimental(Targets::All)
+	};
 }
 
 #[wasm_bindgen(start)]
@@ -30,8 +28,8 @@ pub fn parse(_sql: &str) -> Result<JsValue, Error> {
 
 #[wasm_bindgen]
 pub fn extract_tables_from_kind(kind_sql: &str) -> Result<Vec<String>, Error> {
-    let tables = surrealdb_core::syn::extract_tables_from_kind(kind_sql)?;
-    Ok(tables)
+	let tables = surrealdb_core::syn::extract_tables_from_kind(kind_sql)?;
+	Ok(tables)
 }
 
 #[wasm_bindgen]
@@ -45,8 +43,8 @@ pub fn format(sql: &str, pretty: bool) -> Result<String, Error> {
 
 #[wasm_bindgen]
 pub fn validate(sql: &str) -> Result<(), Error> {
-    surrealdb::syn::parse_with_capabilities(sql, caps!())?;
-    Ok(())
+	surrealdb_core::syn::parse_with_capabilities(sql, caps!())?;
+	Ok(())
 }
 
 #[wasm_bindgen]

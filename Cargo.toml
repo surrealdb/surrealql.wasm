@@ -25,8 +25,6 @@ stack-traces = ["dep:console_error_panic_hook"]
 
 [dependencies]
 anyhow = "1.0.99"
-chrono = { version = "0.4.37", features = ["serde", "wasmbind"] }
-ciborium = "0.2.1"
 console_error_panic_hook = { version = "0.1.7", optional = true }
 fern = "0.6.2"
 log = "0.4.21"

@@ -3047,8 +3047,6 @@ name = "surrealql"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "chrono",
- "ciborium",
  "console_error_panic_hook",
  "fern",
  "log",
