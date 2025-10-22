@@ -1,4 +1,4 @@
-# surrealql.wasm
+# @surrealdb/wasm
 
 WebAssembly utility functions for SurrealQL.
 
@@ -11,20 +11,18 @@ WebAssembly utility functions for SurrealQL.
 A few code snippets to showcase various ways of importing the library.
 
 ```js
-import { SurrealQL, Value } from 'surrealql.wasm/v1';
-import { SurrealQL, Value } from 'surrealql.wasm/v2';
+import { SurrealQL, Value } from '@surrealdb/ql-wasm';
 ```
 
 ### Via UNPKG
 ```js
-import { SurrealQL, Value } from 'https://unpkg.com/surrealql.wasm/lib/v1.js';
-import { SurrealQL, Value } from 'https://unpkg.com/surrealql.wasm/lib/v2.js';
+import { SurrealQL, Value } from 'https://unpkg.com/@surrealdb/ql-wasm/dist/surrealql/index.js';
 ```
 
 ## Example usage
 
 ```js
-import { SurrealQL, Value } from 'surrealql.wasm/v1';
+import { SurrealQL, Value } from '@surrealdb/ql-wasm';
 
 // Creating a SurrealQL Value
 const value = Value.from_string("{ id: \"person:tobie\" }");
@@ -40,9 +38,6 @@ value.json(true); // Pretty
 // Converting a value to CBOR, represented as a Uint8Array
 value.to_cbor();
 
-// Parsing queries
-SurrealQL.parse("SELECT * FROM person");
-
 // Formatting queries
 SurrealQL.format("SELECT * FROM person");
 
@@ -53,4 +48,10 @@ SurrealQL.validate_value("[1, 2, 3]");
 SurrealQL.validate_thing("person:tobie");
 SurrealQL.validate_idiom("person:tobie->likes[WHERE something]");
 SurrealQL.validate_subquery("SELECT * FROM person");
+
+// Extracting tables from a kind
+SurrealQL.extract_tables_from_kind("record<person>");
+// ["person"]
+SurrealQL.extract_tables_from_kind("record<a | b | c>");
+// ["a", "b", "c"]
 ```

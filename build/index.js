@@ -1,9 +1,10 @@
 import * as esbuild from "esbuild";
 import copyFilePlugin from 'esbuild-plugin-copy-file';
+import { spawn } from "node:child_process";
 import fs from 'fs';
 
 const shimContent = new Buffer.from(await fs.readFileSync('./build/shim.js'));
-const targets = ['v1', 'v2'];
+const targets = ['surrealql'];
 
 await Promise.all(targets.map(build));
 
@@ -14,33 +15,51 @@ async function build(target) {
 
 async function applyPatches(target) {
 	let content = fs.readFileSync(`compiled/${target}/index.js`).toString();
-	content = shimContent + content;
+    content = shimContent + content;
 
-	const tauriPatch = fs.readFileSync(`build/tauri.patch`).toString().split("===========\n");
-	content = content.replace(tauriPatch[0], tauriPatch[1]);
+    const tauriPatch = fs
+        .readFileSync("build/tauri.patch")
+        .toString()
+        .split("===========\n");
+	
+    content = content.replace(tauriPatch[0], tauriPatch[1]);
 
-	fs.writeFileSync(`compiled/${target}/patched.js`, content)
+    fs.writeFileSync(`compiled/${target}/index.js`, content);
 }
 
 async function bundle(target) {
 	await esbuild.build({
-		entryPoints: [`compiled/${target}/patched.js`],
+		entryPoints: [`lib/${target}.ts`],
 		sourcemap: true,
 		bundle: true,
+        minifyWhitespace: true,
+        minifySyntax: true,
 		format: "esm",
 		platform: 'node',
 		outfile: `dist/${target}/index.js`,
 		plugins: [
 			copyFilePlugin({
 				after: Object.fromEntries(
-					["index_bg.wasm", "index_bg.wasm.d.ts", "index.d.ts"].map(
+					["index_bg.wasm", "index_bg.wasm.d.ts"].map(
 						(f) => [
 							`dist/${target}/${f}`,
 							`compiled/${target}/${f}`,
 						]
 					)
-				),
+				)
 			}),
 		],
+	});
+
+	spawn("npx", [
+        "dts-bundle-generator",
+        "-o",
+        `dist/${target}/types.d.ts`,
+        `lib/${target}.ts`,
+        "--no-check",
+        "--export-referenced-types",
+        "false",
+    ], {
+		stdio: "inherit",
 	});
 }

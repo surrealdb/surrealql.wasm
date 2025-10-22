@@ -3,10 +3,18 @@ use serde::ser::Serialize;
 use serde_json::ser::PrettyFormatter;
 use serde_json::Value as Json;
 use serde_wasm_bindgen::from_value;
-use surrealdb::rpc::format::cbor::Cbor;
+use surrealdb_core::dbs::capabilities::Targets;
+use surrealdb_core::dbs::Capabilities;
+use surrealdb_types::ToSql;
 use wasm_bindgen::prelude::JsValue;
 use wasm_bindgen::prelude::*;
 use web_sys::js_sys::Uint8Array;
+
+macro_rules! caps {
+	() => {
+		&Capabilities::all().with_experimental(Targets::All)
+	};
+}
 
 #[wasm_bindgen(start)]
 pub fn setup() {
@@ -14,63 +22,29 @@ pub fn setup() {
 }
 
 #[wasm_bindgen]
-pub fn parse(sql: &str) -> Result<JsValue, Error> {
-	let ast = surrealdb::sql::parse(sql)?;
-	let ser = serde_wasm_bindgen::Serializer::json_compatible()
-		.serialize_large_number_types_as_bigints(true);
-	let res = ast.serialize(&ser)?;
-	Ok(res)
+pub fn extract_tables_from_kind(kind_sql: &str) -> Result<Vec<String>, Error> {
+	let tables = surrealdb_core::syn::extract_tables_from_kind(kind_sql)?;
+	Ok(tables)
 }
 
 #[wasm_bindgen]
 pub fn format(sql: &str, pretty: bool) -> Result<String, Error> {
-	let ast = surrealdb::sql::parse(sql)?;
+	let ast = surrealdb_core::syn::parse(sql)?;
 	Ok(match pretty {
-		true => format!("{ast:#}"),
-		false => format!("{ast}"),
+		true => ast.to_sql(), // TODO: Add pretty formatting back in.
+		false => ast.to_sql(),
 	})
 }
 
 #[wasm_bindgen]
 pub fn validate(sql: &str) -> Result<(), Error> {
-	surrealdb::sql::parse(sql)?;
-	Ok(())
-}
-
-#[wasm_bindgen]
-pub fn validate_where(sql: &str) -> Result<(), Error> {
-	let sql = format!("SELECT * FROM validate WHERE {sql}");
-	surrealdb::sql::parse(&sql)?;
-	Ok(())
-}
-
-#[wasm_bindgen]
-pub fn validate_value(sql: &str) -> Result<(), Error> {
-	surrealdb::sql::value(sql)?;
-	Ok(())
-}
-
-#[wasm_bindgen]
-pub fn validate_thing(sql: &str) -> Result<(), Error> {
-	surrealdb::sql::thing(sql)?;
-	Ok(())
-}
-
-#[wasm_bindgen]
-pub fn validate_idiom(sql: &str) -> Result<(), Error> {
-	surrealdb::sql::idiom(sql)?;
-	Ok(())
-}
-
-#[wasm_bindgen]
-pub fn validate_subquery(sql: &str) -> Result<(), Error> {
-	surrealdb::sql::subquery(sql)?;
+	surrealdb_core::syn::parse_with_capabilities(sql, caps!())?;
 	Ok(())
 }
 
 #[wasm_bindgen]
 pub struct Value {
-	inner: surrealdb::sql::Value,
+	inner: surrealdb_types::Value,
 }
 
 #[wasm_bindgen]
@@ -82,7 +56,8 @@ impl Value {
 	/// ```
 	#[wasm_bindgen]
 	pub fn from_string(val: String) -> Result<Value, Error> {
-		let val = surrealdb::sql::value(&val).map_err(|_| "Failed to parse value from string")?;
+		let val =
+			surrealdb_core::syn::value(&val).map_err(|_| "Failed to parse value from string")?;
 		Ok(Value {
 			inner: val,
 		})
@@ -95,8 +70,8 @@ impl Value {
 	/// ```
 	#[wasm_bindgen]
 	pub fn from_json_string(val: String) -> Result<Value, Error> {
-		let val =
-			surrealdb::sql::json(&val).map_err(|_| "Failed to parse value from JSON string")?;
+		let val = surrealdb_core::syn::json(&val)
+			.map_err(|_| "Failed to parse value from JSON string")?;
 		Ok(Value {
 			inner: val,
 		})
@@ -109,7 +84,7 @@ impl Value {
 	/// ```
 	#[wasm_bindgen]
 	pub fn from_json(val: JsValue) -> Result<Value, Error> {
-		let val = surrealdb::sql::json(&from_value::<Json>(val)?.to_string())?;
+		let val = surrealdb_core::syn::json(&from_value::<Json>(val)?.to_string())?;
 		Ok(Value {
 			inner: val,
 		})
@@ -122,11 +97,8 @@ impl Value {
 	/// ```
 	#[wasm_bindgen]
 	pub fn from_cbor(val: Uint8Array) -> Result<Value, Error> {
-		let val: ciborium::Value =
-			ciborium::from_reader::<ciborium::Value, _>(&mut val.to_vec().as_slice())
-				.map_err(|_| Error::from("Received invalid binary data"))?;
-		let val: surrealdb::sql::Value =
-			<Cbor as TryInto<surrealdb::sql::Value>>::try_into(Cbor(val))
+		let val: surrealdb_types::Value =
+			surrealdb_core::rpc::format::cbor::decode(val.to_vec().as_slice())
 				.map_err(|_| Error::from("Received invalid binary data"))?;
 		Ok(Value {
 			inner: val,
@@ -142,8 +114,8 @@ impl Value {
 	#[wasm_bindgen]
 	pub fn format(&self, pretty: bool) -> Result<String, Error> {
 		Ok(match pretty {
-			true => format!("{:#}", self.inner),
-			false => format!("{}", self.inner),
+			true => self.inner.to_sql(), // TODO: Add pretty formatting back in.
+			false => self.inner.to_sql(),
 		})
 	}
 
@@ -162,10 +134,10 @@ impl Value {
 					&mut buf,
 					PrettyFormatter::with_indent(b"\t"),
 				);
-				self.inner.clone().into_json().serialize(&mut serializer).unwrap();
+				self.inner.clone().into_json_value().serialize(&mut serializer).unwrap();
 				String::from_utf8(buf).unwrap()
 			}
-			false => self.inner.clone().into_json().to_string(),
+			false => self.inner.clone().into_json_value().to_string(),
 		})
 	}
 
@@ -178,11 +150,8 @@ impl Value {
 	#[wasm_bindgen]
 	pub fn to_cbor(&self) -> Result<Uint8Array, Error> {
 		// Into CBOR value
-		let cbor: Cbor =
-			self.inner.clone().try_into().map_err(|_| "Failed to convert Value to CBOR")?;
-		let mut res = Vec::new();
-		ciborium::into_writer(&cbor.0, &mut res).unwrap();
-		let out_arr: Uint8Array = res.as_slice().into();
-		Ok(out_arr)
+		let cbor = surrealdb_core::rpc::format::cbor::encode(self.inner.clone())
+			.map_err(|_| "Failed to convert Value to CBOR")?;
+		Ok(Uint8Array::from(cbor.as_slice()))
 	}
 }

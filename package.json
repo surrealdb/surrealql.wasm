@@ -1,6 +1,6 @@
 {
-    "name": "surrealql.wasm",
-    "version": "0.1.8",
+    "name": "@surrealdb/ql-wasm",
+    "version": "0.3.0",
     "packageManager": "pnpm@9.0.6",
     "description": "WebAssembly utility functions for SurrealQL",
     "repository": {
@@ -13,28 +13,22 @@
     },
     "type": "module",
     "files": [
-        "dist/",
-        "lib/"
+        "dist/"
     ],
     "exports": {
-        "./v1": {
-            "types": "./lib/v1.d.ts",
-            "default": "./lib/v1.js"
-        },
-        "./v2": {
-            "types": "./lib/v2.d.ts",
-            "default": "./lib/v2.js"
+        ".": {
+            "types": "./dist/surrealql/types.d.ts",
+            "default": "./dist/surrealql/index.js"
         }
     },
     "scripts": {
         "serve": "esbuild --bundle --servedir=.",
         "build": "npm run compile && npm run build-literal",
-        "compile": "npm run compile:v1 && npm run compile:v2",
-        "compile:v1": "wasm-pack build --release --target deno --out-name index --out-dir compiled/v1 --no-default-features --features parser-v1",
-        "compile:v2": "wasm-pack build --release --target deno --out-name index --out-dir compiled/v2 --no-default-features --features parser-v2",
+        "compile": "wasm-pack build --release --target deno --out-name index --out-dir compiled/surrealql --no-default-features",
         "build-literal": "node build/index.js"
     },
     "devDependencies": {
+        "dts-bundle-generator": "^9.5.1",
         "esbuild": "^0.17.19",
         "esbuild-plugin-copy-file": "^0.0.2"
     }
