@@ -3050,9 +3050,7 @@ dependencies = [
  "chrono",
  "ciborium",
  "console_error_panic_hook",
- "dmp",
  "fern",
- "futures",
  "log",
  "serde",
  "serde-wasm-bindgen",
@@ -3060,7 +3058,6 @@ dependencies = [
  "surrealdb-core",
  "surrealdb-types",
  "wasm-bindgen",
- "wasm-bindgen-futures",
  "wasm-bindgen-test",
  "web-sys",
 ]

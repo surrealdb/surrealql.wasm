@@ -4,9 +4,19 @@ use serde_json::ser::PrettyFormatter;
 use serde_json::Value as Json;
 use serde_wasm_bindgen::from_value;
 use surrealdb_types::ToSql;
+use surrealdb_core::dbs::capabilities::Targets;
+use surrealdb::dbs::Capabilities;
+use surrealdb::rpc::format::cbor::Cbor;
+use surrealdb::sql::Statement;
 use wasm_bindgen::prelude::JsValue;
 use wasm_bindgen::prelude::*;
 use web_sys::js_sys::Uint8Array;
+
+macro_rules! caps {
+    () => {
+        &Capabilities::all().with_experimental(Targets::All)
+    }
+}
 
 #[wasm_bindgen(start)]
 pub fn setup() {
@@ -35,39 +45,8 @@ pub fn format(sql: &str, pretty: bool) -> Result<String, Error> {
 
 #[wasm_bindgen]
 pub fn validate(sql: &str) -> Result<(), Error> {
-	surrealdb_core::syn::parse(sql)?;
-	Ok(())
-}
-
-#[wasm_bindgen]
-pub fn validate_where(sql: &str) -> Result<(), Error> {
-	let sql = format!("SELECT * FROM validate WHERE {sql}");
-	surrealdb_core::syn::parse(&sql)?;
-	Ok(())
-}
-
-#[wasm_bindgen]
-pub fn validate_value(sql: &str) -> Result<(), Error> {
-	surrealdb_core::syn::value(sql)?;
-	Ok(())
-}
-
-#[wasm_bindgen]
-pub fn validate_thing(sql: &str) -> Result<(), Error> {
-	surrealdb_core::syn::record_id(sql)?;
-	Ok(())
-}
-
-#[wasm_bindgen]
-pub fn validate_idiom(sql: &str) -> Result<(), Error> {
-	surrealdb_core::syn::validate_idiom(sql)?;
-	Ok(())
-}
-
-#[wasm_bindgen]
-pub fn validate_subquery(sql: &str) -> Result<(), Error> {
-	surrealdb_core::syn::validate_expr(sql)?;
-	Ok(())
+    surrealdb::syn::parse_with_capabilities(sql, caps!())?;
+    Ok(())
 }
 
 #[wasm_bindgen]
