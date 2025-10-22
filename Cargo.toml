@@ -2,7 +2,7 @@
 name = "surrealql"
 publish = false
 edition = "2021"
-version = "0.1.0"
+version = "0.3.0"
 authors = ["Tobie Morgan Hitchcock <tobie@surrealdb.com>"]
 description = "WebAssembly utility functions for SurrealQL"
 repository = "https://github.com/surrealdb/surrealql.wasm"

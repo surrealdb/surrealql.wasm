@@ -22,11 +22,6 @@ pub fn setup() {
 }
 
 #[wasm_bindgen]
-pub fn parse(_sql: &str) -> Result<JsValue, Error> {
-	Err(Error::from("Not implemented: Use validate() instead"))
-}
-
-#[wasm_bindgen]
 pub fn extract_tables_from_kind(kind_sql: &str) -> Result<Vec<String>, Error> {
 	let tables = surrealdb_core::syn::extract_tables_from_kind(kind_sql)?;
 	Ok(tables)
