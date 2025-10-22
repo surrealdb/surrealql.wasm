@@ -54,14 +54,7 @@ jobs:
       - name: Build & Bundle
         run: pnpm build
 
-      - name: Publish (latest)
-        if: github.ref == 'refs/heads/main'
-        run: pnpm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish (next)
-        if: github.ref != 'refs/heads/main'
-        run: pnpm publish --access public
+      - name: Publish
+        run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
