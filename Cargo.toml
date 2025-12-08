@@ -2,7 +2,7 @@
 name = "surrealql"
 publish = false
 edition = "2021"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Tobie Morgan Hitchcock <tobie@surrealdb.com>"]
 description = "WebAssembly utility functions for SurrealQL"
 repository = "https://github.com/surrealdb/surrealql.wasm"
@@ -26,7 +26,7 @@ stack-traces = ["dep:console_error_panic_hook"]
 [dependencies]
 anyhow = "1.0.99"
 console_error_panic_hook = { version = "0.1.7", optional = true }
-fern = "0.6.2"
+fern = "0.7.1"
 log = "0.4.21"
 serde = { version = "1.0.197", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
