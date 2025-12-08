@@ -31,7 +31,7 @@ pub fn extract_tables_from_kind(kind_sql: &str) -> Result<Vec<String>, Error> {
 pub fn format(sql: &str, pretty: bool) -> Result<String, Error> {
 	let ast = surrealdb_core::syn::parse(sql)?;
 	Ok(match pretty {
-		true => ast.to_sql(), // TODO: Add pretty formatting back in.
+		true => ast.to_sql_pretty(),
 		false => ast.to_sql(),
 	})
 }
@@ -114,7 +114,7 @@ impl Value {
 	#[wasm_bindgen]
 	pub fn format(&self, pretty: bool) -> Result<String, Error> {
 		Ok(match pretty {
-			true => self.inner.to_sql(), // TODO: Add pretty formatting back in.
+			true => self.inner.to_sql_pretty(),
 			false => self.inner.to_sql(),
 		})
 	}
