@@ -29,7 +29,7 @@
     },
     "devDependencies": {
         "dts-bundle-generator": "^9.5.1",
-        "esbuild": "^0.17.19",
+        "esbuild": "^0.28.1",
         "esbuild-plugin-copy-file": "^0.0.2"
     }
 }
